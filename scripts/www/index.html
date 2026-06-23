@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>途测智宝 — 工务一体化智能测算工具</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-top">
+            <div class="logo">
+                <span class="logo-icon">🛤️</span>
+                <h1>途测智宝</h1>
+            </div>
+            <div class="bluetooth-status" id="bluetoothStatus">
+                <span class="bt-dot"></span>
+                <span class="bt-text">蓝牙未连接</span>
+            </div>
+        </div>
+        <p class="header-sub">工务一体化智能测算工具</p>
+    </header>
+
+    <main class="main-content">
+        <section class="page active" id="page-home">
+            <div class="card-grid">
+                <div class="func-card" data-page="versine">
+                    <div class="card-icon">📐</div>
+                    <div class="card-info">
+                        <h3>曲线正矢测算</h3>
+                        <p>正矢差 / 累计差自动计算与合规判定</p>
+                    </div>
+                    <span class="card-arrow">▶</span>
+                </div>
+                <div class="func-card" data-page="corrugation">
+                    <div class="card-icon">〰️</div>
+                    <div class="card-info">
+                        <h3>波磨量计算</h3>
+                        <p>钢轨波磨指数计算与超限判定</p>
+                    </div>
+                    <span class="card-arrow">▶</span>
+                </div>
+                <div class="func-card" data-page="noise">
+                    <div class="card-icon">🔊</div>
+                    <div class="card-info">
+                        <h3>噪音污染检测</h3>
+                        <p>多点噪声采集与等级判定</p>
+                    </div>
+                    <span class="card-arrow">▶</span>
+                </div>
+                <div class="func-card" data-page="gap">
+                    <div class="card-icon">🌡️</div>
+                    <div class="card-info">
+                        <h3>轨缝轨温锁温测算</h3>
+                        <p>轨缝预留值 / 锁定轨温自动计算</p>
+                    </div>
+                    <span class="card-arrow">▶</span>
+                </div>
+                <div class="func-card" data-page="accel">
+                    <div class="card-icon">📊</div>
+                    <div class="card-info">
+                        <h3>车体加速度测算</h3>
+                        <p>三轴合成加速度与振动频率分析</p>
+                    </div>
+                    <span class="card-arrow">▶</span>
+                </div>
+            </div>
+            <div class="history-entry" id="btnHistory">
+                <span class="history-icon">📋</span>
+                <span>历史测算记录</span>
+                <span class="history-count" id="historyCount">0</span>
+                <span class="card-arrow">▶</span>
+            </div>
+        </section>
+
+        <section class="page" id="page-versine">
+            <div class="page-header">
+                <button class="btn-back" data-back="home">← 返回</button>
+                <h2>曲线正矢测算</h2>
+            </div>
+            <div class="page-body">
+                <div class="form-group">
+                    <label>曲线半径 (m)</label>
+                    <input type="number" id="v-radius" placeholder="请输入曲线半径" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>弦长 (m)</label>
+                    <input type="number" id="v-chord" placeholder="请输入弦长" step="0.1" value="20">
+                </div>
+                <div class="form-group">
+                    <label>测点间距 (m)</label>
+                    <input type="number" id="v-spacing" placeholder="请输入测点间距" step="0.1" value="5">
+                </div>
+                <div class="form-group">
+                    <label>实测正矢数据（每行一个值，单位mm）</label>
+                    <textarea id="v-measured" rows="6" placeholder="例如：&#10;12.5&#10;13.0&#10;12.8&#10;13.2&#10;12.6"></textarea>
+                </div>
+                <button class="btn-primary btn-full" id="btnCalcVersine">开始测算</button>
+                <div class="result-panel" id="resultVersine"></div>
+            </div>
+        </section>
+
+        <section class="page" id="page-corrugation">
+            <div class="page-header">
+                <button class="btn-back" data-back="home">← 返回</button>
+                <h2>波磨量计算</h2>
+            </div>
+            <div class="page-body">
+                <div class="form-group">
+                    <label>波磨波长 (mm)</label>
+                    <input type="number" id="c-wavelength" placeholder="请输入波磨波长" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>波深 (mm)</label>
+                    <input type="number" id="c-depth" placeholder="请输入波深" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>钢轨类型</label>
+                    <select id="c-rail-type">
+                        <option value="60">60kg/m</option>
+                        <option value="50">50kg/m</option>
+                        <option value="43">43kg/m</option>
+                    </select>
+                </div>
+                <button class="btn-primary btn-full" id="btnCalcCorrugation">开始测算</button>
+                <div class="result-panel" id="resultCorrugation"></div>
+            </div>
+        </section>
+
+        <section class="page" id="page-noise">
+            <div class="page-header">
+                <button class="btn-back" data-back="home">← 返回</button>
+                <h2>噪音污染检测</h2>
+            </div>
+            <div class="page-body">
+                <div class="form-group">
+                    <label>检测区域</label>
+                    <input type="text" id="n-location" placeholder="请输入检测位置描述">
+                </div>
+                <div class="form-group">
+                    <label>噪声数据 (dB)，每行一个值</label>
+                    <textarea id="n-values" rows="6" placeholder="例如：&#10;68.5&#10;72.3&#10;65.8&#10;70.1"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>检测时段</label>
+                    <select id="n-period">
+                        <option value="day">昼间 (6:00-22:00)</option>
+                        <option value="night">夜间 (22:00-6:00)</option>
+                    </select>
+                </div>
+                <button class="btn-primary btn-full" id="btnCalcNoise">开始检测</button>
+                <div class="result-panel" id="resultNoise"></div>
+            </div>
+        </section>
+
+        <section class="page" id="page-gap">
+            <div class="page-header">
+                <button class="btn-back" data-back="home">← 返回</button>
+                <h2>轨缝轨温锁温测算</h2>
+            </div>
+            <div class="page-body">
+                <div class="form-group">
+                    <label>钢轨类型</label>
+                    <select id="g-rail-type">
+                        <option value="60">60kg/m</option>
+                        <option value="50">50kg/m</option>
+                        <option value="43">43kg/m</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>钢轨长度 (m)</label>
+                    <input type="number" id="g-rail-length" placeholder="请输入单根钢轨长度" step="0.01" value="25">
+                </div>
+                <div class="form-group">
+                    <label>当前轨温 (°C)</label>
+                    <input type="number" id="g-temp" placeholder="请输入当前轨温" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>实测轨缝宽度 (mm)</label>
+                    <input type="number" id="g-gap" placeholder="请输入实测轨缝值" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>锁定轨温 (°C)（已知则填写）</label>
+                    <input type="number" id="g-lock-temp" placeholder="如已知锁定轨温请填写" step="0.1">
+                </div>
+                <button class="btn-primary btn-full" id="btnCalcGap">开始测算</button>
+                <div class="result-panel" id="resultGap"></div>
+            </div>
+        </section>
+
+        <section class="page" id="page-accel">
+            <div class="page-header">
+                <button class="btn-back" data-back="home">← 返回</button>
+                <h2>车体加速度测算</h2>
+            </div>
+            <div class="page-body">
+                <div class="form-group">
+                    <label>检测速度 (km/h)</label>
+                    <input type="number" id="a-speed" placeholder="请输入检测速度" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>横向加速度 X (m/s²)</label>
+                    <input type="number" id="a-x" placeholder="X轴加速度" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>垂向加速度 Y (m/s²)</label>
+                    <input type="number" id="a-y" placeholder="Y轴加速度" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>纵向加速度 Z (m/s²)</label>
+                    <input type="number" id="a-z" placeholder="Z轴加速度" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>振动频率 (Hz)（选填）</label>
+                    <input type="number" id="a-freq" placeholder="如已知频率请填写" step="0.1">
+                </div>
+                <button class="btn-primary btn-full" id="btnCalcAccel">开始测算</button>
+                <div class="result-panel" id="resultAccel"></div>
+            </div>
+        </section>
+
+        <section class="page" id="page-history">
+            <div class="page-header">
+                <button class="btn-back" data-back="home">← 返回</button>
+                <h2>历史测算记录</h2>
+            </div>
+            <div class="page-body">
+                <div class="history-actions">
+                    <button class="btn-secondary" id="btnClearHistory">清空记录</button>
+                    <button class="btn-secondary" id="btnExportAll">导出Excel表格</button>
+                </div>
+                <div class="history-list" id="historyList">
+                    <p class="empty-hint">暂无测算记录</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-nav="home">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">首页</span>
+        </button>
+        <button class="nav-item" data-nav="history">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">记录</span>
+        </button>
+        <button class="nav-item" id="btnBluetooth">
+            <span class="nav-icon">📡</span>
+            <span class="nav-label">蓝牙</span>
+        </button>
+    </nav>
+
+    <div class="modal-overlay" id="modalBluetooth">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>蓝牙设备连接</h3>
+                <button class="btn-close" id="btnCloseBtModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="bt-hint">点击下方按钮搜索附近的"轨距智测先锋"设备</p>
+                <button class="btn-primary btn-full" id="btnScanDevice">🔍 搜索设备</button>
+                <div class="bt-device-list" id="btDeviceList"></div>
+                <div class="bt-manual">
+                    <p>或手动输入模拟数据（演示模式）</p>
+                    <button class="btn-secondary btn-full" id="btnSimulateData">📝 模拟数据录入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalReport">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3>检测报告</h3>
+                <button class="btn-close" id="btnCloseReport">✕</button>
+            </div>
+            <div class="modal-body report-content" id="reportContent"></div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="btnPrintReport">🖨️ 打印报告</button>
+                <button class="btn-secondary" id="btnSaveReport">💾 保存报告</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/bluetooth.js"></script>
+    <script src="js/calculator-versine.js"></script>
+    <script src="js/calculator-corrugation.js"></script>
+    <script src="js/calculator-noise.js"></script>
+    <script src="js/calculator-gap.js"></script>
+    <script src="js/calculator-accel.js"></script>
+    <script src="js/report.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
